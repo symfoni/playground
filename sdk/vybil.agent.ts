@@ -1,43 +1,42 @@
-import { SymfoniAgent, SymfoniSocket, DID, VC, VP, Anyone, Context } from "@symfoni/sdk"
+import { SymfoniAgent, SymfoniSocket, Anyone } from "@symfoni/sdk"
 
 
-const agent = await SymfoniAgent({
-	secret: getSecret(),
-	id: DID("https://agent.vybil.no"),
-	context: Context("https://symfoni.id/types/"),
-	requests: [
-		{ type: VP("DriversLicense") },
-	],
-	issues: [
-		{ type: VC("UnlockedCar") },
-	],
-})
+SymfoniAgent()
+	.init({
+		name: "agent.vybil.no",
+		secret: SECRET,
+		context: "https://symfoni.id/types/",
+		requestsVP: [
+			{ type: "DriversLicense" },
+		],
+		issuesVC: [
+			{ type: "UnlockedCar" },
+		],
+	})
 	.onConnect({
 		to: Anyone,
 		run: ({ remote, agent }) => {
 			agent.connect({ to: remote })
 		}
 	})
-	.onRequest({
-		type: VC("UnlockedCar"),
-		run: ({ type, remote, agent }) => {
-			const vp = agent.request({ type: VP("DriversLicense"), from: remote })
+	.onRequestVC({
+		type: "UnlockedCar",
+		run: async ({ type, remote, agent }) => {
+			const vp = await agent.requestVP({ type: "DriversLicense", from: remote })
 
 			// Unlock actual car
 
-			const vc = agent.createVC({ type })
-			agent.issue({ vc, to: remote })
+			const vc = agent.createVC({ type, ...vp })
+
+			agent.issueVC({ vc, to: remote })
 		}
 	})
-	.onPresent({
-		type: VP("DriversLicense"),
+	.onPresentVP({
+		type: "DriversLicense",
 		run: ({ agent, vp, next }) => {
-			if (agent.verify(vp)) {
+			if (agent.verifyVP(vp)) {
 				next(vp)
 			}
 		}
 	})
-	.init()
-
-
-agent.listen({ to: SymfoniSocket("127.0.0.1:3001") })
+	.listen({ to: SymfoniSocket("127.0.0.1:3001") })

@@ -1,38 +1,42 @@
-import { SymfoniAgent, SymfoniRemote, Context, VC, VP, DID } from "@symfoni/sdk"
+import { SymfoniAgent, SymfoniRemote, DID, Anyone } from "@symfoni/sdk"
 
 
-const agent = await SymfoniAgent({
-	privateKey: "23kfjdlkfjds2", // Get privateKey from secure storage. Out of scope
-	context: Context("https://symfoni.id/types/"),
-	requests: [
-		{ type: VC("UnlockedCar") },
-		{ type: VC("DriversLicense") },
-		{ type: VC("NationalIdentity") },
-	],
-	issues: [
-		{ type: VC("NationalIdentity") },
-	],
-	presents: [
-		{ type: VP("DriversLicense") },
-		{ type: VP("NationalIdentity") },
-	],
-})
-	.onRequest({
-		type: VP("DriversLicense"),
-		run: ({ type, reason, agent, remote }) => {
+const agent = await SymfoniAgent()
+	.init({
+		name: "app.symfoni.id",
+		secret: SECRET,
+		context: "https://symfoni.id/types/",
+		requestsVC: [
+			{ type: "UnlockedCar" },
+			{ type: "DriversLicense" },
+			{ type: "NationalIdentity" },
+		],
+		issuesVC: [
+			{ type: "NationalIdentity" },
+		],
+		presentsVP: [
+			{ type: "DriversLicense" },
+			{ type: "NationalIdentity" },
+		],
+	})
+	.onRequestVP({
+		type: "DriversLicense",
+		run: async ({ type, reason, agent, remote }) => {
 
 			const nationalIdentityVC =
-				await agent.request({ type: VC("NationalIdentity"), from: Anyone })
+				await agent.requestVC({ type: "NationalIdentity", from: Anyone })
 
 			if (!nationalIdentityVC) return
 
 			const driversLicenceVC =
-				await agent.request({ type: VC("DriversLicense"), from: Anyone })
+				await agent.requestVC({ type: "DriversLicense", from: Anyone })
 
 			if (!driversLicenseVC) return
 
 			const vp = agent.createVP({
-				type, verifier: remote, vc: [
+				type,
+				verifier: remote,
+				vc: [
 					nationalIdentityVC,
 					driversLicenceVC
 				]
@@ -42,15 +46,15 @@ const agent = await SymfoniAgent({
 
 			if (!ok) return
 
-			agent.present({ vp, to: remote })
+			agent.presentVP({ vp, to: remote })
 		}
 	})
-	.onRequest({
-		type: VP("NationalIdentity"),
-		run: ({ type, reason, agent, remote }) => {
+	.onRequestVP({
+		type: "NationalIdentity",
+		run: async ({ type, reason, agent, remote }) => {
 
 			const nationalIdentityVC =
-				await agent.request({ type: VC("NationalIdentity"): from: Anyone })
+				await agent.requestVC({ type: "NationalIdentity", from: Anyone })
 
 			if (!nationalIdentityVC) return
 
@@ -64,76 +68,60 @@ const agent = await SymfoniAgent({
 
 			if (!ok) return
 
-			agent.present({ vp, to: remote })
+			agent.presentVP({ vp, to: remote })
 		}
 	})
-	.onRequest({
-		type: VC("NationalIdentity"),
+	.onRequestVC({
+		type: "NationalIdentity",
 		run: ({ agent, remote: self, type }) => {
 
 			// Do bankID flow
 
 			const vc = agent.createVC({ type })
 
-			agent.issue({ vc, to: self })
+			agent.issueVC({ vc, to: self })
 		}
 	})
-	.onIssue({
-		type: VC("NationalIdentity"),
+	.onIssueVC({
+		type: "NationalIdentity",
 		run: ({ agent, vc, next }) => {
-			agent.hold(vc)
+			agent.holdVC(vc)
 			next(vc)
 		}
 	})
-	.onIssue({
-		type: VC("DriversLicence"),
+	.onIssueVC({
+		type: "DriversLicence",
 		run: ({ agent, vc, next }) => {
-			agent.hold(vc)
+			agent.holdVC(vc)
 			next(vc)
 		}
 	})
-	.init()
-
-//
-// Legg til fast remote
-//
-const vegvesen = SymfoniRemote({
-	id: DID("https://agent.vegvesen.no"),
-	context: Context("https://symfoni.id/types/"),
-	requests: [
-		{ type: VP("NationalIdentity") },
-	],
-	issues: [
-		{ type: VC("DriversLicense") },
-	],
-	presents: []
-})
-
-agent.connect({ to: vegvesen })
+	.connect({
+		to: SymfoniRemote({
+			id: DID("https://agent.vegvesen.no"),
+			context: "https://symfoni.id/types/",
+			requestsVP: [
+				{ type: "NationalIdentity" },
+			],
+			issuesVC: [
+				{ type: "DriversLicense" },
+			],
+		})
+	})
 
 //
 // Legg til midlertidig remote, når bruker scanner QR kode
 //
-const url = scanQR()
+const symfoniRemoteParams = scanQR()
 
-const vybil = SymfoniRemote({
-	id: DID(url),
-	context: Context("https://symfoni.id/types/"),
-	requests: [
-		{ type: VP("DriversLicense") },
-	],
-	issues: [
-		{ type: VC("UnlockedCar") },
-	],
-	presents: []
-})
+const vybil = SymfoniRemote(symfoniRemoteParams)
 
-agent.onConnect({
+agent.connect({ to: vybil }).onConnect({
 	to: vybil,
-	run: ({ remote, agent }) => {
-		agent.request({ type: VC("UnlockedCar"), from: remote })
+	run: async ({ remote, agent }) => {
+		await agent.requestVC({ type: "UnlockedCar", from: remote })
 
 		// Car unlocked !!
 	}
 })
-	.connect({ to: vybil })
+	

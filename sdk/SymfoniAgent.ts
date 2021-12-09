@@ -6,36 +6,62 @@ import {
     SymfoniType,
 } from "@symfoni"
 
-interface SymfoniAgent {
-    init(): Promise<SymfoniAgent>;
+export interface SymfoniAgent {
+    //
+    // Util functions
+    //
+    createVC: (params: { type: SymfoniType }) => SymfoniVC;
+    createVP: (params: { type: SymfoniType }) => SymfoniVP;
 
-    createVC({ type: SymfoniType }): SymfoniVC;
-    createVP({ type: SymfoniType }): SymfoniVP;
-    verify(thing: SymfoniVP): boolean;
-    hold(thing: SymfoniVC): void;
+    requestVC: 
+        (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVC | null>;
+    requestVP:
+        (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVP | null>;
 
-    listen({ to: SymfoniSocket }): SymfoniAgent;
-    connect({ to: SymfoniRemote }): SymfoniAgent;
+    holdVC: (params: { vc: SymfoniVC }) => void;
+    issueVC: (params: { vc: SymfoniVC, to: SymfoniRemote }) => void;
+    presentVP: (params: { vp: SymfoniVP, to: SymfoniRemote }) => void;
+    verifyVP: (params: { vp: SymfoniVP}) => SymfoniVP | null;
+    
+    //
+    // Builder functions
+    //
+    init: (config: {
+        name: string,   
+        secret: string,
+        context: string,
+        requestsVC: string[] | undefined,
+        requestsVP: string[] | undefined,
+        issuesVC: string[] | undefined,
+        presentsVC: string[] | undefined,
+    }) => Promise<SymfoniAgent>;
+
     onConnect: (params: {
         to: SymfoniRemote,
-        run: ({ remote, agent }) => void
-    }) => SymfoniAgent;
+        run: ({ remote, agent }) => Promise<void>
+    }) => Promise<SymfoniAgent>;
 
-    request({ type: SymfoniType, from: SymfoniRemote }): void;
-    onRequest: (params: {
+    onRequestVC: (params: {
         type: SymfoniType,
-        run: (params: { reason, agent, remote, type }) => void,
-    }) => SymfoniAgent;
+        run: (params: { reason, agent, remote, type }) => Promise<void>,
+    }) => Promise<SymfoniAgent>;
 
-    issue({ vc: SymfoniVC, to: SymfoniRemote }): void;
-    onIssue: (params: {
+    onRequestVP: (params: {
         type: SymfoniType,
-        run: (params: { agent, vc, next }) => void,
-    }) => SymfoniAgent;
+        run: (params: { reason, agent, remote, type }) => Promise<void>,
+    }) => Promise<SymfoniAgent>;
 
-    present: ({ vp: SymfoniVP, to: SymfoniRemote }) => void;
-    onPresent: (params: {
+    onIssueVC: (params: {
         type: SymfoniType,
-        run: (params: { agent, vp, next }) => void,
-    }) => SymfoniAgent;
+        run: (params: { agent, vc, next }) => Promise<void>,
+    }) => Promise<SymfoniAgent>;
+
+    onPresentVP: (params: {
+        type: SymfoniType,
+        run: (params: { agent, vp, next }) => Promise<void>,
+    }) => Promise<SymfoniAgent>;
+
+    listen: (params: { to: SymfoniSocket }) => Promise<SymfoniAgent>;
+    
+    connect: (params: { to: SymfoniRemote }) => Promise<SymfoniAgent>;
 }
