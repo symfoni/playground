@@ -120,7 +120,7 @@ const url = scanQR()
 
 const vybil = SymfoniRemote(url)
 
-agent.onConnect({
+agent.onConnection({
 	from: vybil,
 	run: async ({ agent }) => {
 		await agent.requestCredential({ type: "UnlockedCar", from: vybil })

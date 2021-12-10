@@ -11,7 +11,7 @@ const agent = SymfoniAgentOnEthereum({
 			{ type: "DriversLicense" },
 		],
 	})
-	.onConnect({
+	.onConnection({
 		from: AnyRemote,
 		run: ({ remote, agent }) => {
 			agent.connect({ to: remote })

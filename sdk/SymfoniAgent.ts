@@ -41,7 +41,7 @@ interface SymfoniAgent {
     //
 
 
-    onConnect: (params: {
+    onConnection: (params: {
         from: Someone,
         run: ({ remote, agent }) => Promise<void>
     }) => SymfoniAgent;
