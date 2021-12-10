@@ -22,7 +22,7 @@ const agent = SymfoniAgent()
 		type: "DriversLicense",
 		from: AnyRemote,
 		run: async ({ agent, remote }) => {
-			const vp = await agent.requestPresentation({ type: "NationalIdentity", from: remote })
+			const vp = await agent.requestPresentation({ type: "NationalIdentity", from: remote, verify: true })
 
 			// Do database lookup, to see if remote actually has a drivers license
 
@@ -31,15 +31,7 @@ const agent = SymfoniAgent()
 			agent.issue({ vc, to: remote })
 		}
 	})
-	.onPresentation({
-		type: "NationalIdentity",
-		from: AnyRemote,
-		run: ({ agent, vp, next }) => {
-			if (agent.verify(vp)) {
-				next(vp)
-			}
-		}
-	})
+
 
 await agent.init({ secret: SECRET })
 

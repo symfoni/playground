@@ -54,18 +54,6 @@ interface SymfoniAgent {
         run: (params: { reason, agent, remote, type }) => Promise<void>,
     }) => SymfoniAgent;
 
-    onCredential: (params: {
-        from: Someone,
-        type: SymfoniType,
-        run: (params: { agent, vc, next }) => Promise<void>,
-    }) => SymfoniAgent;
-
-    onPresentation: (params: {
-        from: Someone,
-        type: SymfoniType,
-        run: (params: { agent, vp, next }) => Promise<void>,
-    }) => SymfoniAgent;
-
     //
     // Builder functions with side effects
     //

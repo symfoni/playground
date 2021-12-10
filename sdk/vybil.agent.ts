@@ -22,22 +22,13 @@ const agent = SymfoniAgent()
 		type: "UnlockedCar",
 		from: AnyRemote,
 		run: async ({ remote, agent }) => {
-			const vp = await agent.requestPresentation({ type: "DriversLicense", from: remote })
+			const vp = await agent.requestPresentation({ type: "DriversLicense", from: remote, verify: true })
 
 			// Unlock actual car
 
 			const vc = agent.createCredential({ type: "UnlockedCar", ...vp })
 
 			agent.issue({ vc, to: remote })
-		}
-	})
-	.onPresentation({
-		type: "DriversLicense",
-		from: AnyRemote,
-		run: ({ agent, vp, next }) => {
-			if (agent.verify(vp)) {
-				next(vp)
-			}
 		}
 	})
 

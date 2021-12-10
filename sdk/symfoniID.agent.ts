@@ -26,12 +26,12 @@ const agent = SymfoniAgent()
 		run: async ({ reason, agent, from: remote }) => {
 
 			const nationalIdentity =
-				await agent.requestCredential({ type: "NationalIdentity", from: Anyone })
+				await agent.requestCredential({ type: "NationalIdentity", from: Anyone, hold: true })
 
 			if (!nationalIdentity) return
 
 			const driversLicense =
-				await agent.requestCredential({ type: "DriversLicense", from: Anyone })
+				await agent.requestCredential({ type: "DriversLicense", from: Anyone, hold: true })
 
 			if (!driversLicense) return
 
@@ -58,7 +58,7 @@ const agent = SymfoniAgent()
 		run: async ({ reason, agent, from: remote }) => {
 
 			const nationalIdentity =
-				await agent.requestCredential({ type: "NationalIdentity", from: Anyone })
+				await agent.requestCredential({ type: "NationalIdentity", from: Anyone, hold: true })
 
 			if (!nationalIdentity) return
 
@@ -90,23 +90,6 @@ const agent = SymfoniAgent()
 			agent.issue({ vc, to: self })
 		}
 	})
-	.onCredential({
-		type: "NationalIdentity",
-		from: Self,
-		run: ({ agent, vc, next }) => {
-			agent.hold(vc)
-			next(vc)
-		}
-	})
-	.onCredential({
-		type: "DriversLicence",
-		from: AnyRemote,
-		run: ({ agent, vc, next }) => {
-			agent.hold({ vc })
-			next(vc)
-		}
-	})
-
 	
 await agent.init({ secret: SECRET })
 
