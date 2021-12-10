@@ -42,4 +42,5 @@ const agent = SymfoniAgent()
 	})
 
 await agent.init({ secret: SECRET })
+
 await agent.listen({ to: SymfoniSocket("127.0.0.1:3001") })

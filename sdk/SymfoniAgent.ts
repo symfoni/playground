@@ -10,25 +10,23 @@ import {
 
 interface SymfoniAgent {
     //
-    // Util functions
+    // Core functions without side effects
     //
     createCredential: (params: { type: SymfoniType }) => SymfoniVC;
     createPresentation: (params: { type: SymfoniType }) => SymfoniVP;
+    verify: (params: { vp: SymfoniVP}) => SymfoniVP | null;
 
-    requestCredential: 
-        (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVC | null>;
-    requestPresentation:
-        (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVP | null>;
-
+    //
+    // Core functions with side effects
+    //
+    requestCredential: (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVC | null>;
+    requestPresentation: (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVP | null>;
     issue: (params: { vc: SymfoniVC, to: SymfoniRemote }) => void;
     hold: (params: { vc: SymfoniVC }) => void;
     present: (params: { vp: SymfoniVP, to: SymfoniRemote }) => void;
-    verify: (params: { vp: SymfoniVP}) => SymfoniVP | null;
-
-
 
     //
-    // Builder functions
+    // Builder functions without side effects
     //
     manifest: (manifest: {
         name: string,   
@@ -68,6 +66,9 @@ interface SymfoniAgent {
         run: (params: { agent, vp, next }) => Promise<void>,
     }) => SymfoniAgent;
 
+    //
+    // Builder functions with side effects
+    //
     init: ({ secret: string }) => Promise<SymfoniAgent>
 
     listen: (params: { to: SymfoniSocket }) => Promise<SymfoniAgent>;
