@@ -3,7 +3,7 @@ import { SymfoniAgent } from "./SymfoniAgent"
 import { SECRET } from "./secure-storage";
 import { isItOkToPresent, requestBankID } from "./gui";
 
-const agent = SymfoniAgent()
+export const agent = SymfoniAgent()
 	.onPresentationRequest({
 		run: async ({ reason, agent, from: someone, vp }) => {
 			//
@@ -41,5 +41,3 @@ const agent = SymfoniAgent()
 	})
 
 await agent.init({ secret: SECRET })
-
-export default agent

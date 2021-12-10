@@ -11,7 +11,7 @@ interface BasicSymfoniAgent {
     //
     // Core functions with side effects
     //
-    startIntent: (params: { intent: BasicSymfoniIntent }) => Promise<BasicSymfoniAgent | null>;
+    startIntent: (params: { intent: BasicSymfoniIntent }) => Promise<BasicSymfoniIntent | null>;
     finish: (params: { intent: BasicSymfoniIntent }) => void
 
     requestCredential: (params: { type: SymfoniType, from: SymfoniRemote, hold: boolean }) => Promise<SymfoniVC | null>;
@@ -42,9 +42,9 @@ interface BasicSymfoniAgent {
     //
     // Builder functions with side effects
     //
-    init: (params: { secret: string }) => Promise<BasicSymfoniAgent>
+    init: (params: { secret: string }) => Promise<void>
 
-    listen: (params: { to: SymfoniSocket }) => Promise<BasicSymfoniAgent>;
+    listen: (params: { to: SymfoniSocket }) => Promise<void>;
 }
 
 export type SymfoniVC = {}
