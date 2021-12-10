@@ -1,34 +1,33 @@
-import { SymfoniAgent, SymfoniSocket, AnyRemote } from "@symfoni/agent"
+import { SymfoniAgent, SymfoniSocket } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
 
+
 const agent = SymfoniAgent()
-	.manifest({
-		name: "agent.vegvesen.no",
-		context: "https://symfoni.id/types/",
-		requestsPresentations: [
-			{ type: "NationalIdentity" },
-		],
-		issuesCredentials: [
-			{ type: "DriversLicense" },
-		],
-	})
-	.onConnection({
-		from: AnyRemote,
-		run: ({ remote, agent }) => {
-			agent.connect({ to: remote })
-		}
-	})
 	.onCredentialRequest({
+		context: "https://symfoni.id/credentials/v1/",
 		type: "DriversLicense",
-		from: AnyRemote,
-		run: async ({ agent, remote }) => {
-			const vp = await agent.requestPresentation({ type: "NationalIdentity", from: remote, verify: true })
+		run: async ({ agent, from: someone, context, type }) => {
 
+			await agent.requestPresentation({
+				from: someone,
+				reason: "Ustede førerkort",
+				credentials: [
+					{
+						context,
+						type: "NationalIdentity",
+						issuer: someone.did,
+					}
+				]
+			})
+			//
 			// Do database lookup, to see if remote actually has a drivers license
+			//
+			const vc = agent.createCredential({
+				context,
+				type,
+			})
 
-			const vc = agent.createCredential({ type: "DriversLicense", ...vp })
-
-			agent.issue({ vc, to: remote })
+			agent.issue({ vc, to: someone })
 		}
 	})
 

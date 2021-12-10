@@ -1,116 +1,50 @@
 
-import { SymfoniAgent, SymfoniRemote, Anyone, AnyRemote, Self } from "@symfoni/agent"
+import { SymfoniAgent, SymfoniIntent } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
-import { isItOkToSend, scanQR } from "./gui";
+import { isItOkToPresent, scanQR, requestBankID } from "./gui";
 
 const agent = SymfoniAgent()
-	.manifest({
-		name: "app.symfoni.id",
-		context: "https://symfoni.id/types/",
-		requestsCredentials: [
-			{ type: "UnlockedCar" },
-			{ type: "DriversLicense" },
-			{ type: "NationalIdentity" },
-		],
-		issuesCredentials: [
-			{ type: "NationalIdentity" },
-		],
-		presentsPresentations: [
-			{ type: "DriversLicense" },
-			{ type: "NationalIdentity" },
-		],
-	})
 	.onPresentationRequest({
-		type: "DriversLicense",
-		from: AnyRemote,
-		run: async ({ reason, agent, from: remote }) => {
-
-			const nationalIdentity =
-				await agent.requestCredential({ type: "NationalIdentity", from: Self, hold: true })
-
-			if (!nationalIdentity) return
-
-			const driversLicense =
-				await agent.requestCredential({ type: "DriversLicense", from: Anyone, hold: true })
-
-			if (!driversLicense) return
-
-			const vp = agent.createPresentation({
-				type: "DriversLicense",
-				verifier: remote,
-				credentials: [
-					nationalIdentity,
-					driversLicense
-				]
-			})
-
+		run: async ({ reason, agent, from: someone, vp }) => {
+			//
 			// Ask user ?
-			const ok = isItOkToSend({ vp, to: remote, with: reason })
-
+			//
+			const ok = isItOkToPresent({ vp, to: someone, with: reason })
 			if (!ok) return
 
-			agent.present({ vp, to: remote })
-		}
-	})
-	.onPresentationRequest({
-		type: "NationalIdentity",
-		from: AnyRemote,
-		run: async ({ reason, agent, from: remote }) => {
-
-			const nationalIdentity =
-				await agent.requestCredential({ type: "NationalIdentity", from: Self, hold: true })
-
-			if (!nationalIdentity) return
-
-			const vp = agent.createPresentation({
-				type: "NationalIdentity", 
-				verifier: remote, 
-				credentials: [
-					nationalIdentity
-				]
-			})
-
-			// Ask user ?
-			const ok = isItOkToSend({ vp, to: remote, with: reason })
-
-			if (!ok) return
-
-			agent.present({ vp, to: remote })
+			agent.present({ vp, to: someone })
 		}
 	})
 	.onCredentialRequest({
+		context: "https://symfoni.id/credentials/v1/",
 		type: "NationalIdentity",
-		from: Self,
-		run: ({ agent, type, from: self }) => {
-
+		run: ({ agent, from: someone, type, context }) => {
+			//
 			// Do bankID flow
+			//
+			const jwt = requestBankID()
 
-			const vc = agent.createCredential({ type })
+			const vc = agent.createCredential({
+				context,
+				type,
+				credentialSubject: {
+					nationalIdentity: {
+						identityNumber: "pnr",
+						nationality: "NOR", 
+					}
+				},
+				evidence: { type: "BankIDjwt", jwt } 
+			})
 
-			agent.issue({ vc, to: self })
+			agent.issue({ vc, to: someone })
 		}
 	})
-	
+
 await agent.init({ secret: SECRET })
 
-await agent.connect({
-	to: SymfoniRemote("https://agent.vegvesen.no"),
-})
-
 //
-// Legg til midlertidig remote, når bruker scanner QR kode
+// Lagre en intent in en QR. En intent starter en flyt.
 //
-const url = scanQR()
+const intentURI = scanQR()
 
-const vybil = SymfoniRemote(url)
-
-agent.onConnection({
-	from: vybil,
-	run: async ({ agent }) => {
-		await agent.requestCredential({ type: "UnlockedCar", from: vybil })
-
-		// Car unlocked !!
-	}
-})
-
-await agent.connect({ to: vybil })
+await agent.start({ intent: SymfoniIntent(intentURI) })

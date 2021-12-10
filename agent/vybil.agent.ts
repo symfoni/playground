@@ -1,34 +1,34 @@
-import { SymfoniAgent, SymfoniSocket, AnyRemote } from "@symfoni/agent"
+import { SymfoniAgent, SymfoniSocket } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
 
+const VEGVESEN_DID = "did:github:Vegvesen";
+
 const agent = SymfoniAgent()
-	.manifest({
-		name: "agent.vybil.no",
-		context: "https://symfoni.id/types/",
-		requestsPresentations: [
-			{ type: "DriversLicense" },
-		],
-		issuesCredentials: [
-			{ type: "UnlockedCar" },
-		],
-	})
-	.onConnection({
-		from: AnyRemote,
-		run: ({ remote, agent }) => {
-			agent.connect({ to: remote })
-		}
-	})
-	.onCredentialRequest({
-		type: "UnlockedCar",
-		from: AnyRemote,
-		run: async ({ remote, agent }) => {
-			const vp = await agent.requestPresentation({ type: "DriversLicense", from: remote, verify: true })
+	.onIntentRequest({
+		context: "https://symfoni.id/intents/v1/",
+		type: "RentCar",
+		run: async ({ from: someone, agent, context, intent }) => {
 
+			await agent.requestPresentation({
+				from: someone,
+				reason: "Leie bil",
+				credentials: [
+					{
+						context,
+						type: "DriversLicense",
+						issuer: VEGVESEN_DID,
+					},
+					{
+						context,
+						type: "NationalIdentity",
+						issuer: someone.did,
+					}
+				]
+			})
+			//
 			// Unlock actual car
-
-			const vc = agent.createCredential({ type: "UnlockedCar", ...vp })
-
-			agent.issue({ vc, to: remote })
+			//
+			agent.finish({ intent })
 		}
 	})
 
