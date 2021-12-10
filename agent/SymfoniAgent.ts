@@ -19,8 +19,8 @@ interface SymfoniAgent {
     //
     // Core functions with side effects
     //
-    requestCredential: (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVC | null>;
-    requestPresentation: (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVP | null>;
+    requestCredential: (params: { type: SymfoniType, from: SymfoniRemote, hold: boolean }) => Promise<SymfoniVC | null>;
+    requestPresentation: (params: { type: SymfoniType, from: SymfoniRemote, verify: boolean }) => Promise<SymfoniVP | null>;
     issue: (params: { vc: SymfoniVC, to: SymfoniRemote }) => void;
     hold: (params: { vc: SymfoniVC }) => void;
     present: (params: { vp: SymfoniVP, to: SymfoniRemote }) => void;
