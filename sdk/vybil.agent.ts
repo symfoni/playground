@@ -1,42 +1,47 @@
-import { SymfoniAgent, SymfoniSocket, Anyone } from "@symfoni/sdk"
+import { SECRET } from "secure-storage";
+import { SymfoniAgent, SymfoniSocket, AnyRemote } from "@symfoni/sdk"
 
 
-SymfoniAgent()
-	.init({
+const agent = SymfoniAgent()
+	.configure({
 		name: "agent.vybil.no",
-		secret: SECRET,
 		context: "https://symfoni.id/types/",
-		requestsVP: [
+		requestsPresentations: [
 			{ type: "DriversLicense" },
 		],
-		issuesVC: [
+		issuesCredentials: [
 			{ type: "UnlockedCar" },
 		],
 	})
 	.onConnect({
-		to: Anyone,
+		from: AnyRemote,
 		run: ({ remote, agent }) => {
 			agent.connect({ to: remote })
 		}
 	})
-	.onRequestVC({
+	.onCredentialRequest({
+		from: AnyRemote,
 		type: "UnlockedCar",
 		run: async ({ type, remote, agent }) => {
-			const vp = await agent.requestVP({ type: "DriversLicense", from: remote })
+			const vp = await agent.requestPresentation({ type: "DriversLicense", from: remote })
 
 			// Unlock actual car
 
-			const vc = agent.createVC({ type, ...vp })
+			const vc = agent.createCredential({ type, ...vp })
 
-			agent.issueVC({ vc, to: remote })
+			agent.issue({ vc, to: remote })
 		}
 	})
-	.onPresentVP({
+	.onPresentation({
+		from: AnyRemote,
 		type: "DriversLicense",
 		run: ({ agent, vp, next }) => {
-			if (agent.verifyVP(vp)) {
+			if (agent.verify(vp)) {
 				next(vp)
 			}
 		}
 	})
-	.listen({ to: SymfoniSocket("127.0.0.1:3001") })
+
+await agent.init({ secret: SECRET })
+
+await agent.listen({ to: SymfoniSocket("127.0.0.1:3001") })

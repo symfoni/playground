@@ -1,127 +1,133 @@
-import { SymfoniAgent, SymfoniRemote, DID, Anyone } from "@symfoni/sdk"
+import { SECRET } from "secure-storage";
+import { isItOkToSend, scanQR } from "gui";
+import { SymfoniAgent, SymfoniRemote, DID, Anyone, AnyRemote, Self } from "@symfoni/sdk"
 
 
-const agent = await SymfoniAgent()
-	.init({
+const agent = (await SymfoniAgent()
+	.configure({
 		name: "app.symfoni.id",
-		secret: SECRET,
 		context: "https://symfoni.id/types/",
-		requestsVC: [
+		requestsCredentials: [
 			{ type: "UnlockedCar" },
 			{ type: "DriversLicense" },
 			{ type: "NationalIdentity" },
 		],
-		issuesVC: [
+		issuesCredentials: [
 			{ type: "NationalIdentity" },
 		],
-		presentsVP: [
+		presentsPresentations: [
 			{ type: "DriversLicense" },
 			{ type: "NationalIdentity" },
 		],
 	})
-	.onRequestVP({
+	.onPresentationRequest({
+		from: AnyRemote,
 		type: "DriversLicense",
-		run: async ({ type, reason, agent, remote }) => {
+		run: async ({ reason, agent, from: remote }) => {
 
-			const nationalIdentityVC =
-				await agent.requestVC({ type: "NationalIdentity", from: Anyone })
+			const nationalIdentity =
+				await agent.requestCredential({ type: "NationalIdentity", from: Anyone })
 
-			if (!nationalIdentityVC) return
+			if (!nationalIdentity) return
 
-			const driversLicenceVC =
-				await agent.requestVC({ type: "DriversLicense", from: Anyone })
+			const driversLicense =
+				await agent.requestCredential({ type: "DriversLicense", from: Anyone })
 
-			if (!driversLicenseVC) return
+			if (!driversLicense) return
 
-			const vp = agent.createVP({
-				type,
+			const vp = agent.createPresentation({
+				type: "DriversLicense",
 				verifier: remote,
-				vc: [
-					nationalIdentityVC,
-					driversLicenceVC
+				credentials: [
+					nationalIdentity,
+					driversLicense
 				]
 			})
 
-			// Ask user const ok = isItOkToSend({vp, to: remote, with: reason }) ?
+			// Ask user ?
+			const ok = isItOkToSend({ vp, to: remote, with: reason })
 
 			if (!ok) return
 
-			agent.presentVP({ vp, to: remote })
+			agent.present({ vp, to: remote })
 		}
 	})
-	.onRequestVP({
+	.onPresentationRequest({
+		from: AnyRemote,
 		type: "NationalIdentity",
-		run: async ({ type, reason, agent, remote }) => {
+		run: async ({ reason, agent, from: remote }) => {
 
-			const nationalIdentityVC =
-				await agent.requestVC({ type: "NationalIdentity", from: Anyone })
+			const nationalIdentity =
+				await agent.requestCredential({ type: "NationalIdentity", from: Anyone })
 
-			if (!nationalIdentityVC) return
+			if (!nationalIdentity) return
 
-			const vp = agent.createVP({
-				type, verifier: remote, vc: [
-					nationalIdentityVC
+			const vp = agent.createPresentation({
+				type: "NationalIdentity", 
+				verifier: remote, 
+				credentials: [
+					nationalIdentity
 				]
 			})
 
-			// Ask user const ok = isItOkToSend({vp, to: remote, with: reason }) ?
+			// Ask user ?
+			const ok = isItOkToSend({ vp, to: remote, with: reason })
 
 			if (!ok) return
 
-			agent.presentVP({ vp, to: remote })
+			agent.present({ vp, to: remote })
 		}
 	})
-	.onRequestVC({
+	.onCredentialRequest({
+		from: Self,
 		type: "NationalIdentity",
-		run: ({ agent, remote: self, type }) => {
+		run: ({ agent, type, from: self }) => {
 
 			// Do bankID flow
 
-			const vc = agent.createVC({ type })
+			const vc = agent.createCredential({ type })
 
-			agent.issueVC({ vc, to: self })
+			agent.issue({ vc, to: self })
 		}
 	})
-	.onIssueVC({
+	.onCredential({
+		from: Self,
 		type: "NationalIdentity",
 		run: ({ agent, vc, next }) => {
-			agent.holdVC(vc)
+			agent.hold(vc)
 			next(vc)
 		}
-	})
-	.onIssueVC({
+	}))
+	.onCredential({
+		from: AnyRemote,
 		type: "DriversLicence",
 		run: ({ agent, vc, next }) => {
-			agent.holdVC(vc)
+			agent.hold({ vc })
 			next(vc)
 		}
 	})
-	.connect({
-		to: SymfoniRemote({
-			id: DID("https://agent.vegvesen.no"),
-			context: "https://symfoni.id/types/",
-			requestsVP: [
-				{ type: "NationalIdentity" },
-			],
-			issuesVC: [
-				{ type: "DriversLicense" },
-			],
-		})
-	})
+
+	
+await agent.init({ secret: SECRET })
+
+await agent.connect({
+	to: SymfoniRemote("https://agent.vegvesen.no"),
+})
 
 //
 // Legg til midlertidig remote, når bruker scanner QR kode
 //
-const symfoniRemoteParams = scanQR()
+const url = scanQR()
 
-const vybil = SymfoniRemote(symfoniRemoteParams)
+const vybil = SymfoniRemote(url)
 
-agent.connect({ to: vybil }).onConnect({
-	to: vybil,
-	run: async ({ remote, agent }) => {
-		await agent.requestVC({ type: "UnlockedCar", from: remote })
+agent.onConnect({
+	from: vybil,
+	run: async ({ agent }) => {
+		await agent.requestCredential({ type: "UnlockedCar", from: vybil })
 
 		// Car unlocked !!
 	}
 })
-	
+
+await agent.connect({ to: vybil })

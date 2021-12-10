@@ -4,62 +4,68 @@ import {
     SymfoniRemote,
     SymfoniSocket,
     SymfoniType,
+    Someone,
 } from "@symfoni"
 
 export interface SymfoniAgent {
     //
     // Util functions
     //
-    createVC: (params: { type: SymfoniType }) => SymfoniVC;
-    createVP: (params: { type: SymfoniType }) => SymfoniVP;
+    createCredential: (params: { type: SymfoniType }) => SymfoniVC;
+    createPresentation: (params: { type: SymfoniType }) => SymfoniVP;
 
-    requestVC: 
+    requestCredential: 
         (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVC | null>;
-    requestVP:
+    requestPresentation:
         (params: { type: SymfoniType, from: SymfoniRemote }) => Promise<SymfoniVP | null>;
 
-    holdVC: (params: { vc: SymfoniVC }) => void;
-    issueVC: (params: { vc: SymfoniVC, to: SymfoniRemote }) => void;
-    presentVP: (params: { vp: SymfoniVP, to: SymfoniRemote }) => void;
-    verifyVP: (params: { vp: SymfoniVP}) => SymfoniVP | null;
-    
+    issue: (params: { vc: SymfoniVC, to: SymfoniRemote }) => void;
+    hold: (params: { vc: SymfoniVC }) => void;
+    present: (params: { vp: SymfoniVP, to: SymfoniRemote }) => void;
+    verify: (params: { vp: SymfoniVP}) => SymfoniVP | null;
+
     //
     // Builder functions
     //
-    init: (config: {
+    configure: (config: {
         name: string,   
-        secret: string,
         context: string,
-        requestsVC: string[] | undefined,
-        requestsVP: string[] | undefined,
-        issuesVC: string[] | undefined,
-        presentsVC: string[] | undefined,
-    }) => Promise<SymfoniAgent>;
+        requestsCredentials: SymfoniType[],
+        requestsPresentations: SymfoniType[],
+        issuesCredentials: SymfoniType[],
+        presentsPresentations: SymfoniType[],
+    }) => SymfoniAgent;
 
     onConnect: (params: {
-        to: SymfoniRemote,
+        from: Someone,
         run: ({ remote, agent }) => Promise<void>
-    }) => Promise<SymfoniAgent>;
+    }) => SymfoniAgent;
 
-    onRequestVC: (params: {
+    onCredentialRequest: (params: {
+        from: Someone,
         type: SymfoniType,
         run: (params: { reason, agent, remote, type }) => Promise<void>,
-    }) => Promise<SymfoniAgent>;
+    }) => SymfoniAgent;
 
-    onRequestVP: (params: {
+    onPresentationRequest: (params: {
+        from: Someone,
         type: SymfoniType,
         run: (params: { reason, agent, remote, type }) => Promise<void>,
-    }) => Promise<SymfoniAgent>;
+    }) => SymfoniAgent;
 
-    onIssueVC: (params: {
+    onCredential: (params: {
+        from: Someone,
         type: SymfoniType,
         run: (params: { agent, vc, next }) => Promise<void>,
-    }) => Promise<SymfoniAgent>;
+    }) => SymfoniAgent;
 
-    onPresentVP: (params: {
+    onPresentation: (params: {
+        from: Someone,
         type: SymfoniType,
         run: (params: { agent, vp, next }) => Promise<void>,
-    }) => Promise<SymfoniAgent>;
+    }) => SymfoniAgent;
+
+    init: ({ secret: string }) => Promise<SymfoniAgent>
 
     listen: (params: { to: SymfoniSocket }) => Promise<SymfoniAgent>;
     
