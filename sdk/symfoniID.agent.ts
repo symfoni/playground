@@ -1,7 +1,7 @@
-import { SECRET } from "secure-storage";
-import { isItOkToSend, scanQR } from "gui";
-import { SymfoniAgent, SymfoniRemote, DID, Anyone, AnyRemote, Self } from "@symfoni/sdk"
 
+import { SymfoniAgent, SymfoniRemote, DID, Anyone, AnyRemote, Self } from "@symfoni"
+import { SECRET } from "./secure-storage";
+import { isItOkToSend, scanQR } from "./gui";
 
 const agent = (await SymfoniAgent()
 	.configure({

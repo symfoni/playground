@@ -1,6 +1,5 @@
-import { SECRET } from "secure-storage";
-import { SymfoniAgent, SymfoniSocket, AnyRemote } from "@symfoni/sdk"
-
+import { SymfoniAgent, SymfoniSocket, AnyRemote } from "@symfoni"
+import { SECRET } from "./secure-storage";
 
 const agent = SymfoniAgent()
 	.configure({
