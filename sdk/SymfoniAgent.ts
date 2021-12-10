@@ -27,7 +27,7 @@ export interface SymfoniAgent {
     //
     // Builder functions
     //
-    configure: (config: {
+    manifest: (config: {
         name: string,   
         context: string,
         requestsCredentials: SymfoniType[],

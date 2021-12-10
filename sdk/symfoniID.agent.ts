@@ -4,7 +4,7 @@ import { SECRET } from "./secure-storage";
 import { isItOkToSend, scanQR } from "./gui";
 
 const agent = (await SymfoniAgent()
-	.configure({
+	.manifest({
 		name: "app.symfoni.id",
 		context: "https://symfoni.id/types/",
 		requestsCredentials: [

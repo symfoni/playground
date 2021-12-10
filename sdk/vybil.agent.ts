@@ -2,7 +2,7 @@ import { SymfoniAgent, SymfoniSocket, AnyRemote } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
 
 const agent = SymfoniAgent()
-	.configure({
+	.manifest({
 		name: "agent.vybil.no",
 		context: "https://symfoni.id/types/",
 		requestsPresentations: [
