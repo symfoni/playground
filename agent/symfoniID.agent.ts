@@ -26,7 +26,7 @@ const agent = SymfoniAgent()
 		run: async ({ reason, agent, from: remote }) => {
 
 			const nationalIdentity =
-				await agent.requestCredential({ type: "NationalIdentity", from: Anyone, hold: true })
+				await agent.requestCredential({ type: "NationalIdentity", from: Self, hold: true })
 
 			if (!nationalIdentity) return
 
@@ -58,7 +58,7 @@ const agent = SymfoniAgent()
 		run: async ({ reason, agent, from: remote }) => {
 
 			const nationalIdentity =
-				await agent.requestCredential({ type: "NationalIdentity", from: Anyone, hold: true })
+				await agent.requestCredential({ type: "NationalIdentity", from: Self, hold: true })
 
 			if (!nationalIdentity) return
 
