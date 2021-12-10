@@ -47,4 +47,4 @@ await agent.init({ secret: SECRET })
 //
 const intentURI = scanQR()
 
-await agent.start({ intent: SymfoniIntent(intentURI) })
+await agent.requestIntent({ intent: SymfoniIntent(intentURI) })

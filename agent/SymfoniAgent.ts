@@ -18,9 +18,13 @@ interface SymfoniAgent {
     //
     // Core functions with side effects
     //
+    requestIntent: (params: { intent: SymfoniIntent }) => Promise<SymfoniAgent | null>;
+    finish: (params: { intent: SymfoniIntent }) => void
+
     requestCredential: (params: { type: SymfoniType, from: SymfoniRemote, hold: boolean }) => Promise<SymfoniVC | null>;
-    requestPresentation: (params: { type: SymfoniType, from: SymfoniRemote, verify: boolean }) => Promise<SymfoniVP | null>;
     issue: (params: { vc: SymfoniVC, to: SymfoniRemote }) => void;
+
+    requestPresentation: (params: { type: SymfoniType, from: SymfoniRemote, verify: boolean }) => Promise<SymfoniVP | null>;
     present: (params: { vp: SymfoniVP, to: SymfoniRemote }) => void;
 
     //
@@ -48,8 +52,4 @@ interface SymfoniAgent {
     init: (params: { secret: string }) => Promise<SymfoniAgent>
 
     listen: (params: { to: SymfoniSocket }) => Promise<SymfoniAgent>;
-
-    start: (params: { intent: SymfoniIntent }) => Promise<SymfoniAgent>;
-
-    finish: (params: { intent: SymfoniIntent }) => Promise<SymfoniAgent>;
 }
