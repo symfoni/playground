@@ -36,11 +36,18 @@ interface SymfoniAgent {
     present: (params: { vp: SymfoniVP, to: SymfoniRemote }) => void;
     verify: (params: { vp: SymfoniVP}) => SymfoniVP | null;
 
+    setManifest: (manifest: {
+        name: string,   
+        context: string,
+        requestsCredentials: SymfoniType[],
+        requestsPresentations: SymfoniType[],
+        issuesCredentials: SymfoniType[],
+        presentsPresentations: SymfoniType[],
+    }) => void
+
     //
     // Builder functions
     //
-
-
     onConnection: (params: {
         from: Someone,
         run: ({ remote, agent }) => Promise<void>
