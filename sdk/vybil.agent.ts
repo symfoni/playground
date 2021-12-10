@@ -1,7 +1,8 @@
 import { SymfoniAgentOnEthereum, SymfoniSocket, AnyRemote } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
 
-const agent = SymfoniAgentOnEthereum({
+const agent = SymfoniAgentOnEthereum()
+	.manifest({
 		name: "agent.vybil.no",
 		context: "https://symfoni.id/types/",
 		requestsPresentations: [

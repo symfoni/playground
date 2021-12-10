@@ -1,9 +1,10 @@
 
-import { SymfoniAgentOnEthereum, SymfoniRemote, DID, Anyone, AnyRemote, Self } from "@symfoni/agent"
+import { SymfoniAgent, SymfoniRemote, DID, Anyone, AnyRemote, Self } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
 import { isItOkToSend, scanQR } from "./gui";
 
-const agent = SymfoniAgentOnEthereum({
+const agent = SymfoniAgent()
+	.manifest({
 		name: "app.symfoni.id",
 		context: "https://symfoni.id/types/",
 		requestsCredentials: [
@@ -96,7 +97,7 @@ const agent = SymfoniAgentOnEthereum({
 			agent.hold(vc)
 			next(vc)
 		}
-	}))
+	})
 	.onCredential({
 		type: "DriversLicence",
 		from: AnyRemote,

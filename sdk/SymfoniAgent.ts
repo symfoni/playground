@@ -8,17 +8,6 @@ import {
 } from "@symfoni/agent"
 
 
-export function SymfoniAgentOnEthereum(manifest: {
-    name: string,   
-    context: string,
-    requestsCredentials: SymfoniType[],
-    requestsPresentations: SymfoniType[],
-    issuesCredentials: SymfoniType[],
-    presentsPresentations: SymfoniType[],
-}): SymfoniAgent {
-    return manifest;
-}
-
 interface SymfoniAgent {
     //
     // Util functions
@@ -36,18 +25,20 @@ interface SymfoniAgent {
     present: (params: { vp: SymfoniVP, to: SymfoniRemote }) => void;
     verify: (params: { vp: SymfoniVP}) => SymfoniVP | null;
 
-    setManifest: (manifest: {
+
+
+    //
+    // Builder functions
+    //
+    manifest: (manifest: {
         name: string,   
         context: string,
         requestsCredentials: SymfoniType[],
         requestsPresentations: SymfoniType[],
         issuesCredentials: SymfoniType[],
         presentsPresentations: SymfoniType[],
-    }) => void
+    }) => SymfoniAgent
 
-    //
-    // Builder functions
-    //
     onConnection: (params: {
         from: Someone,
         run: ({ remote, agent }) => Promise<void>
