@@ -5,7 +5,7 @@ import {
     SymfoniSocket,
     SymfoniType,
     Someone,
-} from "@symfoni"
+} from "@symfoni/agent"
 
 export interface SymfoniAgent {
     //

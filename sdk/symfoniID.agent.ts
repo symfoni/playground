@@ -1,5 +1,5 @@
 
-import { SymfoniAgent, SymfoniRemote, DID, Anyone, AnyRemote, Self } from "@symfoni"
+import { SymfoniAgent, SymfoniRemote, DID, Anyone, AnyRemote, Self } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
 import { isItOkToSend, scanQR } from "./gui";
 

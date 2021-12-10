@@ -1,4 +1,4 @@
-import { SymfoniAgent, SymfoniSocket, AnyRemote } from "@symfoni"
+import { SymfoniAgent, SymfoniSocket, AnyRemote } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
 
 const agent = SymfoniAgent()
