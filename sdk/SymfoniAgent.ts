@@ -7,7 +7,19 @@ import {
     Someone,
 } from "@symfoni/agent"
 
-export interface SymfoniAgent {
+
+export function SymfoniAgentOnEthereum(manifest: {
+    name: string,   
+    context: string,
+    requestsCredentials: SymfoniType[],
+    requestsPresentations: SymfoniType[],
+    issuesCredentials: SymfoniType[],
+    presentsPresentations: SymfoniType[],
+}): SymfoniAgent {
+    return manifest;
+}
+
+interface SymfoniAgent {
     //
     // Util functions
     //
@@ -27,14 +39,7 @@ export interface SymfoniAgent {
     //
     // Builder functions
     //
-    manifest: (config: {
-        name: string,   
-        context: string,
-        requestsCredentials: SymfoniType[],
-        requestsPresentations: SymfoniType[],
-        issuesCredentials: SymfoniType[],
-        presentsPresentations: SymfoniType[],
-    }) => SymfoniAgent;
+
 
     onConnect: (params: {
         from: Someone,

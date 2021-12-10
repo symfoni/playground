@@ -1,8 +1,7 @@
-import { SymfoniAgent, SymfoniSocket, AnyRemote } from "@symfoni/agent"
+import { SymfoniAgentOnEthereum, SymfoniSocket, AnyRemote } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
 
-const agent = SymfoniAgent()
-	.manifest({
+const agent = SymfoniAgentOnEthereum({
 		name: "agent.vybil.no",
 		context: "https://symfoni.id/types/",
 		requestsPresentations: [
@@ -19,8 +18,8 @@ const agent = SymfoniAgent()
 		}
 	})
 	.onCredentialRequest({
-		from: AnyRemote,
 		type: "UnlockedCar",
+		from: AnyRemote,
 		run: async ({ type, remote, agent }) => {
 			const vp = await agent.requestPresentation({ type: "DriversLicense", from: remote })
 
@@ -32,8 +31,8 @@ const agent = SymfoniAgent()
 		}
 	})
 	.onPresentation({
-		from: AnyRemote,
 		type: "DriversLicense",
+		from: AnyRemote,
 		run: ({ agent, vp, next }) => {
 			if (agent.verify(vp)) {
 				next(vp)

@@ -1,10 +1,9 @@
 
-import { SymfoniAgent, SymfoniRemote, DID, Anyone, AnyRemote, Self } from "@symfoni/agent"
+import { SymfoniAgentOnEthereum, SymfoniRemote, DID, Anyone, AnyRemote, Self } from "@symfoni/agent"
 import { SECRET } from "./secure-storage";
 import { isItOkToSend, scanQR } from "./gui";
 
-const agent = (await SymfoniAgent()
-	.manifest({
+const agent = SymfoniAgentOnEthereum({
 		name: "app.symfoni.id",
 		context: "https://symfoni.id/types/",
 		requestsCredentials: [
@@ -21,8 +20,8 @@ const agent = (await SymfoniAgent()
 		],
 	})
 	.onPresentationRequest({
-		from: AnyRemote,
 		type: "DriversLicense",
+		from: AnyRemote,
 		run: async ({ reason, agent, from: remote }) => {
 
 			const nationalIdentity =
@@ -53,8 +52,8 @@ const agent = (await SymfoniAgent()
 		}
 	})
 	.onPresentationRequest({
-		from: AnyRemote,
 		type: "NationalIdentity",
+		from: AnyRemote,
 		run: async ({ reason, agent, from: remote }) => {
 
 			const nationalIdentity =
@@ -79,8 +78,8 @@ const agent = (await SymfoniAgent()
 		}
 	})
 	.onCredentialRequest({
-		from: Self,
 		type: "NationalIdentity",
+		from: Self,
 		run: ({ agent, type, from: self }) => {
 
 			// Do bankID flow
@@ -91,16 +90,16 @@ const agent = (await SymfoniAgent()
 		}
 	})
 	.onCredential({
-		from: Self,
 		type: "NationalIdentity",
+		from: Self,
 		run: ({ agent, vc, next }) => {
 			agent.hold(vc)
 			next(vc)
 		}
 	}))
 	.onCredential({
-		from: AnyRemote,
 		type: "DriversLicence",
+		from: AnyRemote,
 		run: ({ agent, vc, next }) => {
 			agent.hold({ vc })
 			next(vc)
