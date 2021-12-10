@@ -4,7 +4,7 @@ import { SECRET } from "./secure-storage";
 const VEGVESEN_DID = "did:github:Vegvesen";
 
 const agent = SymfoniAgent()
-	.onIntentRequest({
+	.onIntentStart({
 		context: "https://symfoni.id/intents/v1/",
 		type: "RentCar",
 		run: async ({ from: someone, agent, context, intent }) => {

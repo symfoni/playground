@@ -1,7 +1,7 @@
 
-import { SymfoniAgent, SymfoniIntent } from "@symfoni/agent"
+import { SymfoniAgent } from "./SymfoniAgent"
 import { SECRET } from "./secure-storage";
-import { isItOkToPresent, scanQR, requestBankID } from "./gui";
+import { isItOkToPresent, requestBankID } from "./gui";
 
 const agent = SymfoniAgent()
 	.onPresentationRequest({
@@ -18,7 +18,7 @@ const agent = SymfoniAgent()
 	.onCredentialRequest({
 		context: "https://symfoni.id/credentials/v1/",
 		type: "NationalIdentity",
-		run: ({ agent, from: someone, type, context }) => {
+		run: async ({ agent, from: someone, type, context }) => {
 			//
 			// Do bankID flow
 			//
@@ -42,9 +42,4 @@ const agent = SymfoniAgent()
 
 await agent.init({ secret: SECRET })
 
-//
-// Lagre en intent in en QR. En intent starter en flyt.
-//
-const intentURI = scanQR()
-
-await agent.requestIntent({ intent: SymfoniIntent(intentURI) })
+export default agent
