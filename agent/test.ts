@@ -1,10 +1,10 @@
 
-import { scanQR } from "./gui"
-import { SymfoniIntent } from "./SymfoniAgent"
-import { agent } from "./symfoniID.agent"
+import { scanQR } from "./lib/gui"
+import { SymfoniAction } from "./lib/SymfoniAgent"
+import { agent as user } from "./agents/user.agent"
 
 export async function test() {
-    const intentURI = scanQR()
+    const actionURI = scanQR()
 
-    await agent.startIntent({ intent: SymfoniIntent(intentURI) })
+    await user.requestAction({ action: SymfoniAction(actionURI) })
 }
