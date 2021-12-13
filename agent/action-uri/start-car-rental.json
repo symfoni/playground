@@ -1,7 +1,7 @@
 {
     "action": { 
         "@context": "https://symfoni.id/actions/v0",
-        "type": "StartCarRental"
-    },
-    "actor": "did:github:Vybil#Actor"
+        "type": "StartCarRental",
+        "id": "did:github:Vybil#StartCarRental"
+    }
 }

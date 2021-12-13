@@ -27,13 +27,13 @@ type SymfoniAgentType = {
     onActionRequest: (params: {
         context: SymfoniContext,
         type: SymfoniType,
-        run: (params: { agent, from: SymfoniRemote, action }) => Promise<void>,
+        run: (params: { agent, from: SymfoniRemote, action, credentials }) => Promise<void>,
     }) => SymfoniAgentType;
 
     onCredentialRequest: (params: {
         context: SymfoniContext,
         type: SymfoniType,
-        run: (params: { reason, agent, from: SymfoniRemote, type, context }) => Promise<void>,
+        run: (params: { reason, agent, from: SymfoniRemote, type, context, credentials }) => Promise<void>,
     }) => SymfoniAgentType;
 
     onPresentationRequest: (params: {

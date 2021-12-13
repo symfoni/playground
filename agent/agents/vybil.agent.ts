@@ -7,13 +7,14 @@ export const agent = SymfoniAgent()
 	.onActionRequest({
 		context: "https://symfoni.id/actions/v1/",
 		type: "StartCarRental",
-		run: async ({ agent, action, NationalIdentity, DriversLicense }) => {
+		run: async ({ agent, action, credentials }) => {
 
+			const [NationalIdentity, DriversLicense] = credentials;
 			if (NationalIdentity === undefined) {
 				return;
 			}
 
-			if (!DriversLicense.classes.contain("A")) {
+			if (!DriversLicense?.classes?.contain("A")) {
 				return;
 			}
 

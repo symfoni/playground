@@ -1,34 +1,29 @@
 {
     "@context": [
         "https://www.w3.org/ns/did/v1",
-        "https://w3id.org/security/suites/ed25519-2020/v1",
-        "https://symfoni.id/agents/v0/",
-        "https://symfoni.id/actions/v0/",
-        "https://symfoni.id/credentials/v0/"
+        "https://w3id.org/security/suites/ed25519-2020/v1"
     ],
     "id": "did:github:Vybil",
-    "verificationMethod": [
-        {}
-    ],
+    "verificationMethod": [{}],
+    "about": {
+        "name": "Vy Bilutleie",
+        "description": "Utleie av biler i or rundt Oslo"
+    },
     "service": [{
-        "id": "did:github:Vybil#Actor",
-        "type": "Actor",
-        "serviceEndpoint": "https://vybil.no/actor/",
-        "actions": [
-            {
-                "type": "StartCarRental",
-                "requires": [{
-                    "type": "NationalIdentity",
-                    "issuer": "did:github:Symfoni"
-                }, {
-                    "type": "DriversLicense",
-                    "issuer": "did:github:Vegvesen"
-                }]
+        "@context": "https://symfoni.id/services/v0/",
+        "id": "did:github:Vybil#StartCarRental",
+        "type": "ActionService",
+        "requirements": [{
+            "@context": "https://symfoni.id/credentials/v0/",
+            "type": "NationalIdentity",
+            "evidence": {
+                "type": "BankID"
             }
-        ],
-        "about": {
-            "name": "Vy Bilutleie",
-            "description": "Utleie av biler i or rundt Oslo"
-        }
+        },{
+            "@context": "https://symfoni.id/credentials/v0/",
+            "type": "DriversLicense",
+            "issuer": "did:github:SymfoniVegvesen"
+        }],
+        "serviceEndpoint": "https://vybil.no/actions/StartCarRental"
     }]
 }
