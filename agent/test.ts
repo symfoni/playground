@@ -1,10 +1,10 @@
 
 import { scanQR } from "./lib/gui"
 import { SymfoniAction } from "./lib/SymfoniAgent"
-import { agent as user } from "./agents/user.agent"
+import { wallet } from "./symfoni.wallet"
 
 export async function test() {
     const actionURI = scanQR()
 
-    await user.requestAction({ action: SymfoniAction(actionURI) })
+    // 🤔 await wallet.requestAction({ action: SymfoniAction(actionURI) })
 }

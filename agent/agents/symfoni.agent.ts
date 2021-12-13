@@ -7,13 +7,13 @@ export const agent = SymfoniAgent()
 	.onCredentialRequest({
 		context: "https://symfoni.id/credentials/v1/",
 		type: "NationalIdentity",
-		run: async ({ from: user, agent, BankID }) => {
+		run: async ({ from: user, agent, BankIDEvidence }) => {
 
             const vc = agent.createCredential({
                 context: "https://symfoni.id/credentials/v1/",
                 type: "NationalIdentity",
                 evidence: {
-                    ...BankID
+                    ...BankIDEvidence
                 }
 			})
 

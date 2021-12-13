@@ -17,7 +17,7 @@
             {
                 "type": "NationalIdentity",
                 "requires": [{
-                    "type": "BankID"
+                    "type": "BankIDEvidence"
                 }]
             }
         ],
