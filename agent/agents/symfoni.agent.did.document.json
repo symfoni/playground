@@ -1,0 +1,29 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1",
+        "https://symfoni.id/agents/v0/",
+        "https://symfoni.id/credentials/v0/"
+    ],
+    "id": "did:github:Symfoni",
+    "verificationMethod": [
+        {}
+    ],
+    "service": [{
+        "id": "did:github:Symfoni#Issuer",
+        "type": "Issuer",
+        "serviceEndpoint": "https://symfoni.id/issuer/",
+        "credentials": [
+            {
+                "type": "NationalIdentity",
+                "requires": [{
+                    "type": "BankID"
+                }]
+            }
+        ],
+        "about": {
+            "name": "Symfoni AS",
+            "description": "Usteder av nasjonal identitet basert på BankID"
+        }
+    }]
+}

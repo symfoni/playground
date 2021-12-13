@@ -28,7 +28,6 @@ type SymfoniAgentType = {
         context: SymfoniContext,
         type: SymfoniType,
         run: (params: { agent, from: SymfoniRemote, action }) => Promise<void>,
-        requires: SymfoniPresentationRequestType
     }) => SymfoniAgentType;
 
     onCredentialRequest: (params: {

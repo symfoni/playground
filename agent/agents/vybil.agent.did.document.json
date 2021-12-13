@@ -1,0 +1,34 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/did/v1",
+        "https://w3id.org/security/suites/ed25519-2020/v1",
+        "https://symfoni.id/agents/v0/",
+        "https://symfoni.id/actions/v0/",
+        "https://symfoni.id/credentials/v0/"
+    ],
+    "id": "did:github:Vybil",
+    "verificationMethod": [
+        {}
+    ],
+    "service": [{
+        "id": "did:github:Vybil#Actor",
+        "type": "Actor",
+        "serviceEndpoint": "https://vybil.no/actor/",
+        "actions": [
+            {
+                "type": "StartCarRental",
+                "requires": [{
+                    "type": "NationalIdentity",
+                    "issuer": "did:github:Symfoni"
+                }, {
+                    "type": "DriversLicense",
+                    "issuer": "did:github:Vegvesen"
+                }]
+            }
+        ],
+        "about": {
+            "name": "Vy Bilutleie",
+            "description": "Utleie av biler i or rundt Oslo"
+        }
+    }]
+}

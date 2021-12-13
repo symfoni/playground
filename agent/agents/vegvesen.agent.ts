@@ -19,27 +19,6 @@ export const agent = SymfoniAgent()
 
 			agent.issue({ vc, to: user })
 		},
-		requires: {
-			context: "https://symfoni.id/presentations/v1/",
-			type: "CredentialsPresentation",
-			credentials: [
-				{
-					context: "https://symfoni.id/credentials/v1/",
-					type: "NationalIdentity",
-					issuer: SYMFONI_DID,
-				}
-			],
-			verifier: {
-				name: "Statens Vegvesen"
-			},
-			reason: [{
-				lang: "en",
-				text: "Issue Drivers License",
-			}, {
-				lang: "no",
-				text: "Ustede førerkort",
-			}],
-		},
 	})
 
 

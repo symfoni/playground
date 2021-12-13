@@ -7,38 +7,18 @@ export const agent = SymfoniAgent()
 	.onCredentialRequest({
 		context: "https://symfoni.id/credentials/v1/",
 		type: "NationalIdentity",
-		run: async ({ from: user, agent }) => {
+		run: async ({ from: user, agent, BankID }) => {
 
             const vc = agent.createCredential({
                 context: "https://symfoni.id/credentials/v1/",
                 type: "NationalIdentity",
                 evidence: {
-                    ...user.BankID
+                    ...BankID
                 }
 			})
 
 			agent.issue({ vc, to: user })
 		},
-		requires: [{
-			context: "https://symfoni.id/presentations/v1/",
-			type: "BankIDPresentation",
-			credentials: [
-				{
-					context: "https://symfoni.id/credentials/v1/",
-					type: "BankID",
-				}
-			],
-			verifier: {
-				name: "Symfoni AS"
-			},
-			reason: [{
-				lang: "en",
-				text: "Issue national ID",
-			}, {
-				lang: "no",
-				text: "Ustede nasjonal ID",
-			}],
-		}],
 	})
 
 
