@@ -9,8 +9,8 @@
     ],
     "service": [{
         "@context": "https://symfoni.id/services/v0/",
-        "id": "did:github:Vegvesen#DriversLicense",
-        "type": "CredentialService",
+        "id": "did:github:Vegvesen#DriversLicenseIssuer",
+        "type": "IssuerService",
         "credential": {
             "@context": "https://symfoni.id/credentials/v0/",
             "type": "DriversLicense"
@@ -22,6 +22,6 @@
                 "type": "BankID"
             }
         }],
-        "serviceEndpoint": "https://vegvesen.no/credentials/DriversLicense"
+        "serviceEndpoint": "https://vegvesen.no/issuer/DriversLicense"
     }]
 }

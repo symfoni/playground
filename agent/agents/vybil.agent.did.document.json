@@ -22,7 +22,7 @@
         },{
             "@context": "https://symfoni.id/credentials/v0/",
             "type": "DriversLicense",
-            "issuer": "did:github:SymfoniVegvesen"
+            "issuer": "did:github:Vegvesen#DriversLicenseIssuer"
         }],
         "serviceEndpoint": "https://vybil.no/actions/StartCarRental"
     }]
