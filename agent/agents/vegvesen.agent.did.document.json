@@ -11,6 +11,9 @@
     "service": [{
         "id": "did:github:Vegvesen#DriversLicense",
         "type": "CredentialService",
+        "serviceEndpoint": "https://vegvesen.no/credentials/DriversLicense",
+
+
         "issues": {
             "type": "DriversLicense"
         },
@@ -20,7 +23,6 @@
             "evidence": {
                 "type": "BankID"
             }
-        }],
-        "serviceEndpoint": "https://vegvesen.no/credentials/DriversLicense"
+        }]
     }]
 }

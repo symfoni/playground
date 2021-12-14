@@ -7,9 +7,9 @@ export const agent = SymfoniAgent()
 	.context("https://symfoni.id/context/v0/")
 	.onCredentialRequest({
 		type: "DriversLicense",
-		run: async ({ from: user, agent, context, type, credentials }) => {
+		run: async ({ from: user, agent, context, type, requirements }) => {
 
-			const [NationalIdentity] = credentials;
+			const [NationalIdentity] = requirements;
 			if (NationalIdentity === undefined) {
 				return;
 			}

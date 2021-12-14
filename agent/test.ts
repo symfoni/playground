@@ -6,5 +6,5 @@ import { wallet } from "./symfoni.wallet"
 export async function test() {
     const actionURI = scanQR()
 
-    // 🤔 await wallet.requestAction({ action: SymfoniAction(actionURI) })
+    await wallet.requestAction({ action: SymfoniAction(actionURI) })
 }
