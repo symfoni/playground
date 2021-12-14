@@ -11,8 +11,12 @@
     "service": [{
         "id": "did:github:Vegvesen#DriversLicense",
         "type": "CredentialService",
+        "issues": {
+            "type": "DriversLicense"
+        },
         "requirements": [{
             "type": "NationalIdentity",
+            "issuer": null,
             "evidence": {
                 "type": "BankID"
             }
