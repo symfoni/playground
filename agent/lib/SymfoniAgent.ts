@@ -24,20 +24,21 @@ type SymfoniAgentType = {
     //
     // Builder functions without side effects
     //
+    context: (context: SymfoniContext) => SymfoniAgentType;
     onActionRequest: (params: {
-        context: SymfoniContext,
+        context?: SymfoniContext,
         type: SymfoniType,
         run: (params: { agent, from: SymfoniRemote, action, credentials }) => Promise<void>,
     }) => SymfoniAgentType;
 
     onCredentialRequest: (params: {
-        context: SymfoniContext,
+        context?: SymfoniContext,
         type: SymfoniType,
         run: (params: { reason, agent, from: SymfoniRemote, type, context, credentials }) => Promise<void>,
     }) => SymfoniAgentType;
 
     onPresentationRequest: (params: {
-        context: SymfoniContext,
+        context?: SymfoniContext,
         type: SymfoniType,
         run: (params: { reason, agent, from: SymfoniRemote, request }) => Promise<void>,
     }) => SymfoniAgentType;

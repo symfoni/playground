@@ -4,8 +4,8 @@ const PORT = "<port>"
 const SECRET = "<secret>"
 
 export const agent = SymfoniAgent()
+	.context("https://symfoni.id/context/v0/")
 	.onActionRequest({
-		context: "https://symfoni.id/actions/v1/",
 		type: "StartCarRental",
 		run: async ({ agent, action, credentials }) => {
 

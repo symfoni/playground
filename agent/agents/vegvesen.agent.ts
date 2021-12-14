@@ -4,8 +4,8 @@ const SECRET = "<secret>"
 const PORT = "<port>"
 
 export const agent = SymfoniAgent()
+	.context("https://symfoni.id/context/v0/")
 	.onCredentialRequest({
-		context: "https://symfoni.id/credentials/v1/",
 		type: "DriversLicense",
 		run: async ({ from: user, agent, context, type, credentials }) => {
 
