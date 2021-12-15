@@ -9,20 +9,12 @@
         {}
     ],
     "service": [{
-        "id": "did:github:Vegvesen#DriversLicense",
-        "type": "CredentialService",
-        "serviceEndpoint": "https://vegvesen.no/credentials/DriversLicense",
-
-
-        "issues": {
-            "type": "DriversLicense"
-        },
-        "requirements": [{
-            "type": "NationalIdentity",
-            "issuer": null,
-            "evidence": {
-                "type": "BankID"
-            }
-        }]
+        "id": "did:github:Vegvesen#didcomm-1",
+        "type": "DIDCommMessaging",
+        "serviceEndpoint": "http://vegvesen.no/didcomm",
+        "accept": ["didcomm/v2"]
     }]
 }
+
+
+

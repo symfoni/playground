@@ -1,5 +1,13 @@
 {
-    "action": {
-        "id": "did:github:Vybil#StartCarRental"
+    "typ": "application/didcomm-plain+json",
+    "type": "https://didcomm.org/out-of-band/2.0/invitation",
+    "id": "<id used for context as pthid>",
+    "from": "did:github:Vy",
+    "body": {
+        "goal-code": "id.vy.start-car-rental",
+        "goal": "Rent a car from Vy bilutleie",
+        "requires": [
+            { "type": "DriversLicense", "issuer": "did:github:Vegvesen" }
+        ]
     }
 }
